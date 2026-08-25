@@ -1,0 +1,16 @@
+{
+  "name": "html2apk-basic-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web.mjs",
+    "build:android-ci": "npm run prepare:web && node scripts/clean-android.mjs && npx cap add android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}
