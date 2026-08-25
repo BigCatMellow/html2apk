@@ -30,33 +30,38 @@ jobs:
       fail-fast: false
       matrix:
         app: [meditation, ereader, shoulder-timer]
-    if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         uses: actions/checkout@v4
 
       - name: Set up Node.js
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
       - name: Set up Java
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
 
       - name: Install dependencies
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         working-directory: apps/${{ matrix.app }}
         run: npm install
 
       - name: Build Android APK
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         working-directory: apps/${{ matrix.app }}
         run: npm run build:android-ci
 
       - name: Upload APK
+        if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.app }}-debug-apk
