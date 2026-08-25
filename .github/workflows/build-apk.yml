@@ -28,6 +28,7 @@ jobs:
   build:
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         app: [meditation, ereader, shoulder-timer]
     runs-on: ubuntu-latest
@@ -58,7 +59,21 @@ jobs:
       - name: Build Android APK
         if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
         working-directory: apps/${{ matrix.app }}
-        run: npm run build:android-ci
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            echo "Android build attempt ${attempt}/3"
+            if npm run build:android-ci; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Android build failed after 3 attempts"
+              exit 1
+            fi
+            wait_seconds=$((attempt * 20))
+            echo "Transient build failure; retrying in ${wait_seconds}s"
+            sleep "$wait_seconds"
+          done
 
       - name: Upload APK
         if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
