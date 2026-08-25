@@ -21,6 +21,14 @@
 - Type: HTML/CSS/JS app with Capacitor Local Notifications
 - Notes: native scheduled reminders supplement the fast in-app repeating alarm so alerts continue when the app is backgrounded or closed.
 
+## Morning Edition
+
+- Folder: `apps/morning-edition`
+- Package: `com.bigcatmellow.morningedition`
+- Type: remote-hosted GitHub Pages app wrapped with Capacitor
+- Hosted UI: `https://bigcatmellow.github.io/Morning_Edition/`
+- Notes: the live GitHub Pages site is the source of truth. Changes to the hosted HTML/CSS/JS appear in the installed app without rebuilding the APK; native-shell changes still require a new APK.
+
 ## APK storage policy
 
 GitHub Actions artifacts are useful for test builds but expire. GitHub Releases are the intended permanent APK shelf. Use the **Publish APK Release** workflow when an APK is ready to keep.
