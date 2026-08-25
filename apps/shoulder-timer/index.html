@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<title>Shoulder</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div><h1>Shoulder</h1><small>BBQ cook planner</small></div>
+    </div>
+    <button class="iconbtn" id="testBtn" aria-label="Test alarm">♪</button>
+  </div>
+
+  <main id="screenCook">
+    <section class="hero">
+      <div class="hero-kicker">Plan backward from dinner</div>
+      <h2>When do you want to eat?</h2>
+      <p>Set serving time and the app calculates when to dry brine, start cooking, wrap, finish, and rest.</p>
+      <div class="timebox">
+        <label for="endTime">Serving time</label>
+        <input id="endTime" type="datetime-local">
+      </div>
+      <div class="actions">
+        <button class="primary" id="startBtn">Build my cook</button>
+        <button class="secondary" id="resetBtn">Reset</button>
+      </div>
+      <div class="statusline" id="status">Choose when you want to eat.</div>
+    </section>
+
+    <section class="next-card">
+      <div class="next-head">
+        <div class="hero-kicker" style="margin:0">Next step</div>
+        <span class="badge" id="phaseBadge">Waiting</span>
+      </div>
+      <div class="next-title" id="nextTitle">Set a serving time</div>
+      <div class="next-desc" id="nextDesc">Your cooking schedule will appear here.</div>
+      <div id="overdueNote" class="hidden" style="margin-top:8px;color:var(--danger);font-size:.8rem;font-weight:700"></div>
+      <div class="countrow">
+        <span class="chip" id="countdown">—</span>
+        <span class="chip" id="nextClock">—</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-copy"><span id="progressLabel">Not started</span><span id="progressPct">0%</span></div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric"><div class="m-label">Start</div><div class="m-value">275°F</div></div>
+      <div class="metric"><div class="m-label">Wrapped</div><div class="m-value">300°F</div></div>
+      <div class="metric"><div class="m-label">Probe</div><div class="m-value">~198°F</div></div>
+      <div class="metric"><div class="m-label">Finish</div><div class="m-value">200–205°F</div></div>
+    </section>
+
+    <div class="tip">
+      <strong>Cook by condition, not just the clock.</strong>
+      <p>Wrap when bark is dark, dry, and set. Finish when a probe slides in with almost no resistance.</p>
+    </div>
+
+    <div class="section-head">
+      <h3>Cook timeline</h3>
+      <span id="timelineMeta">10h cook + 2h rest</span>
+    </div>
+    <section class="timeline" id="timeline"></section>
+  </main>
+
+  <main id="screenGuide" class="hidden">
+    <div class="section-head" style="margin-top:10px"><h3>Quick guide</h3><span>What matters most</span></div>
+    <div class="tip"><strong>Bark</strong><p>Do not wrap just because the meat reaches a number. Wait until the bark is dark mahogany, fairly dry, and does not smear.</p></div>
+    <div class="tip"><strong>Sweet rubs</strong><p>If your rub has a lot of brown sugar, wrap a little earlier once the bark is set to reduce the chance of scorching.</p></div>
+    <div class="tip"><strong>Finish</strong><p>Start probing around 198°F. Most shoulders finish around 200–205°F, but tenderness is the real test.</p></div>
+    <div class="tip"><strong>Rest</strong><p>Keep it wrapped and hold 1–2 hours minimum. A 2-hour hold is built into this schedule.</p></div>
+  </main>
+
+  <main id="screenSettings" class="hidden">
+    <div class="section-head" style="margin-top:10px"><h3>Settings</h3><span>Cook alerts</span></div>
+    <div class="settings">
+      <div class="switchrow"><input id="soundEnabled" type="checkbox" checked><div><b>Sound + vibration</b><small style="display:block">Repeat until you acknowledge the alert</small></div></div>
+    </div>
+    <div class="settings" style="margin-top:10px">
+      <div><b>Android notifications</b><small style="display:block">Background reminders repeat every 10 minutes until you acknowledge the step</small></div>
+      <button class="secondary" id="notifyBtn">Enable</button>
+    </div>
+    <div class="settings" style="margin-top:10px">
+      <div><b>Clear checkmarks</b><small style="display:block">Keep the current serving time</small></div>
+      <button class="secondary" id="clearChecksBtn">Clear</button>
+    </div>
+    <div class="tip"><strong>Android alert behavior</strong><p>Inside the app, the alarm repeats every 8 seconds until acknowledged. Native Android reminders are also scheduled for each step and repeat every 10 minutes for up to 3 hours unless you acknowledge that step. This keeps reminders working when the app is backgrounded or closed. Android may ask for Notifications and Alarms &amp; reminders permission.</p></div>
+  </main>
+</div>
+
+<div id="alarmModal" class="hidden" style="position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="width:min(420px,100%);background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:20px;box-shadow:var(--shadow);text-align:center">
+    <div class="hero-kicker">Cook alert</div>
+    <div id="alarmTitle" style="font-size:1.55rem;font-weight:900;margin-top:8px">Next step</div>
+    <div id="alarmDesc" class="next-desc" style="margin-top:8px"></div>
+    <button class="primary" id="ackBtn" style="width:100%;margin-top:18px">Acknowledge</button>
+  </div>
+</div>
+
+<nav class="bottomnav" aria-label="App navigation">
+  <button class="navbtn active" data-screen="Cook">Cook</button>
+  <button class="navbtn" data-screen="Guide">Guide</button>
+  <button class="navbtn" data-screen="Settings">Settings</button>
+</nav>
+
+<script src="./app.js" defer></script>
+<script type="module" src="./native-notifications.js"></script>
+</body>
+</html>

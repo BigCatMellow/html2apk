@@ -1,0 +1,18 @@
+{
+  "name": "meditation-guide-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android wrapper for Meditation Guide",
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web.mjs",
+    "unpack:source": "node scripts/unpack-source.mjs",
+    "build:android-ci": "npm run prepare:web && node scripts/clean-android.mjs && npx cap add android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}

@@ -1,0 +1,41 @@
+name: Sync Wiki
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/wiki/**'
+      - '.github/workflows/sync-wiki.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone repository wiki
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+
+      - name: Copy wiki pages
+        run: |
+          find wiki -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp -R docs/wiki/. wiki/
+
+      - name: Push wiki changes
+        run: |
+          git -C wiki config user.name "github-actions[bot]"
+          git -C wiki config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C wiki add -A
+          if git -C wiki diff --cached --quiet; then
+            echo "Wiki already up to date"
+          else
+            git -C wiki commit -m "Sync wiki from repository docs"
+            git -C wiki push
+          fi
