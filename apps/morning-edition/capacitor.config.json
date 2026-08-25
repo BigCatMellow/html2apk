@@ -1,0 +1,12 @@
+{
+  "appId": "com.bigcatmellow.morningedition",
+  "appName": "Morning Edition",
+  "webDir": "www",
+  "server": {
+    "url": "https://bigcatmellow.github.io/Morning_Edition/",
+    "cleartext": false
+  },
+  "android": {
+    "backgroundColor": "#f2eadf"
+  }
+}
