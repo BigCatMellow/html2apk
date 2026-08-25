@@ -5,6 +5,7 @@
   "description": "Android pork shoulder cook timer with persistent local reminders",
   "scripts": {
     "build:web": "vite build && cp app.js dist/app.js",
+    "unpack:original": "node scripts/unpack-original.mjs",
     "build:android-ci": "npm run build:web && node scripts/clean-android.mjs && npx cap add android && node scripts/patch-android.mjs && cd android && ./gradlew assembleDebug"
   },
   "dependencies": {
