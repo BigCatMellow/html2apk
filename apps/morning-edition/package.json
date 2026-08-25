@@ -1,0 +1,17 @@
+{
+  "name": "morning-edition-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Thin Android wrapper for the live Morning Edition GitHub Pages site",
+  "scripts": {
+    "prepare:web": "node scripts/prepare-web.mjs",
+    "build:android-ci": "npm run prepare:web && node scripts/clean-android.mjs && npx cap add android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}
