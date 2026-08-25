@@ -1,0 +1,65 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: App to build
+        required: true
+        type: choice
+        options:
+          - meditation
+          - ereader
+          - shoulder-timer
+  pull_request:
+    paths:
+      - 'apps/**'
+      - '.github/workflows/build-apk.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - '.github/workflows/build-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [meditation, ereader, shoulder-timer]
+    if: github.event_name != 'workflow_dispatch' || matrix.app == inputs.app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        working-directory: apps/${{ matrix.app }}
+        run: npm install
+
+      - name: Build Android APK
+        working-directory: apps/${{ matrix.app }}
+        run: npm run build:android-ci
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-debug-apk
+          path: apps/${{ matrix.app }}/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
