@@ -1,0 +1,7 @@
+{
+  "appId": "com.bigcatmellow.example",
+  "appName": "Example App",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "backgroundColor": "#111111" }
+}
