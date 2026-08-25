@@ -80,8 +80,26 @@ adb install -r app.apk
 adb logcat -d | grep -iE "PackageManager|PackageInstaller|INSTALL_FAILED|PackageParser|apksig|signature" | tail -100
 ```
 
-## 6. Build-system error we already hit
+## 6. Gradle cache ordering
 
-Do not enable Gradle dependency caching in `actions/setup-java` before the Capacitor Android project exists. GitHub Actions looks for Gradle files while initializing the cache and fails if `npx cap add android` has not created them yet.
+Do not enable Gradle dependency caching in `actions/setup-java` before the Capacitor Android project exists. GitHub Actions looks for Gradle files while initializing the cache and can fail if `npx cap add android` has not created them yet.
 
 The simplest fix is to omit that early cache setting or move Gradle-specific caching until after Android project creation.
+
+## 7. Maven Central HTTP 429 in GitHub Actions
+
+A build can fail even when the app is correct if Maven Central rate-limits dependency downloads:
+
+```text
+Could not GET 'https://repo.maven.apache.org/...'
+Received status code 429 from server: Too Many Requests
+```
+
+We hit this after starting three fresh Android builds at the same time. The identical E-reader source had already passed CI, then failed on `main` only because Maven rejected dependency requests.
+
+The repository's shared workflow now reduces this risk in two ways:
+
+1. Android matrix jobs use `max-parallel: 1`, so the three apps do not hammer Maven simultaneously.
+2. The Android build step retries transient failures up to three times with increasing waits.
+
+Treat a wall of dependency-resolution errors ending in HTTP 429 as an infrastructure/download problem, not an HTML or Android-source defect.
