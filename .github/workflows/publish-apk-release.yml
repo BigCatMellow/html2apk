@@ -1,0 +1,61 @@
+name: Publish APK Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: App to publish
+        required: true
+        type: choice
+        options:
+          - meditation
+          - ereader
+          - shoulder-timer
+      version:
+        description: Version label, for example 1.0.0
+        required: true
+        default: 1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      APP: ${{ inputs.app }}
+      VERSION: ${{ inputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        working-directory: apps/${{ inputs.app }}
+        run: npm install
+
+      - name: Build APK
+        working-directory: apps/${{ inputs.app }}
+        run: npm run build:android-ci
+
+      - name: Stage APK
+        run: |
+          cp "apps/${APP}/android/app/build/outputs/apk/debug/app-debug.apk" "${APP}-${VERSION}.apk"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${APP}-v${VERSION}"
+          gh release create "$TAG" "${APP}-${VERSION}.apk" \
+            --target "${GITHUB_SHA}" \
+            --title "${APP} ${VERSION}" \
+            --notes "APK built from the HTML2APK repository. This is a personal/testing Android APK, not a Play Store signed release."
