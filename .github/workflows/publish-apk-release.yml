@@ -15,20 +15,23 @@ on:
         description: Version label, for example 1.0.0
         required: true
         default: 1.0.0
+  pull_request:
+    paths:
+      - '.github/workflows/publish-apk-release.yml'
 
 permissions:
   contents: write
 
 concurrency:
-  group: apk-release-${{ inputs.app }}
+  group: apk-release-${{ github.event_name }}-${{ inputs.app || 'validation' }}
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      APP: ${{ inputs.app }}
-      VERSION: ${{ inputs.version }}
+      APP: ${{ github.event_name == 'workflow_dispatch' && inputs.app || 'meditation' }}
+      VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '0.0.0-test' }}
       KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
       KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -48,18 +51,19 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Verify signing secrets
+      - name: Verify permanent signing secrets
+        if: github.event_name == 'workflow_dispatch'
         run: |
           test -n "$KEYSTORE_B64" || { echo "::error::Missing ANDROID_KEYSTORE_BASE64 repository secret"; exit 1; }
           test -n "$KEYSTORE_PASSWORD" || { echo "::error::Missing ANDROID_KEYSTORE_PASSWORD repository secret"; exit 1; }
           test -n "$KEY_ALIAS" || { echo "::error::Missing ANDROID_KEY_ALIAS repository secret"; exit 1; }
 
       - name: Install dependencies
-        working-directory: apps/${{ inputs.app }}
+        working-directory: apps/${{ env.APP }}
         run: npm install
 
       - name: Create Android project
-        working-directory: apps/${{ inputs.app }}
+        working-directory: apps/${{ env.APP }}
         shell: bash
         run: |
           set -euo pipefail
@@ -95,15 +99,37 @@ jobs:
           PY
 
       - name: Build unsigned release APK
-        working-directory: apps/${{ inputs.app }}/android
+        working-directory: apps/${{ env.APP }}/android
         run: ./gradlew assembleRelease
 
       - name: Decode permanent signing key
+        if: github.event_name == 'workflow_dispatch'
         run: |
           KEYSTORE="$RUNNER_TEMP/html2apk-release.p12"
           printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE"
           chmod 600 "$KEYSTORE"
           echo "KEYSTORE=$KEYSTORE" >> "$GITHUB_ENV"
+
+      - name: Create temporary validation signing key
+        if: github.event_name == 'pull_request'
+        run: |
+          KEYSTORE="$RUNNER_TEMP/html2apk-validation.p12"
+          VALIDATION_PASSWORD='html2apk-validation-only'
+          VALIDATION_ALIAS='html2apk-validation'
+          keytool -genkeypair \
+            -keystore "$KEYSTORE" \
+            -storetype PKCS12 \
+            -storepass "$VALIDATION_PASSWORD" \
+            -keypass "$VALIDATION_PASSWORD" \
+            -alias "$VALIDATION_ALIAS" \
+            -keyalg RSA \
+            -keysize 2048 \
+            -sigalg SHA256withRSA \
+            -validity 2 \
+            -dname 'CN=HTML2APK Validation, O=BigCatMellow, C=US'
+          echo "KEYSTORE=$KEYSTORE" >> "$GITHUB_ENV"
+          echo "KEYSTORE_PASSWORD=$VALIDATION_PASSWORD" >> "$GITHUB_ENV"
+          echo "KEY_ALIAS=$VALIDATION_ALIAS" >> "$GITHUB_ENV"
 
       - name: Align, sign, and verify APK
         run: |
@@ -127,7 +153,17 @@ jobs:
             "$ALIGNED"
           "$APKSIGNER" verify --verbose --print-certs "$SIGNED"
 
+      - name: Upload signed validation APK
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-signing-validation
+          path: ${{ env.APP }}-${{ env.VERSION }}.apk
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Publish GitHub Release
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
