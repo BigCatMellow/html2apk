@@ -1,0 +1,11 @@
+{
+  "appId": "com.bigcatmellow.ereaderapp",
+  "appName": "Mobile E-reader",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#111111"
+  }
+}
