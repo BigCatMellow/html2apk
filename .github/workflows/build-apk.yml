@@ -84,3 +84,12 @@ jobs:
           path: apps/${{ matrix.app }}/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Upload E-reader unsigned release APK
+        if: matrix.app == 'ereader' && (github.event_name != 'workflow_dispatch' || matrix.app == inputs.app)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ereader-unsigned-release-apk
+          path: apps/ereader/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          if-no-files-found: error
+          retention-days: 30
