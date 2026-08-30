@@ -1,12 +1,12 @@
 {
   "name": "mobile-ereader-android",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Android wrapper for the Mobile E-reader web application",
   "scripts": {
     "prepare:web": "node scripts/prepare-web.mjs",
     "unpack:source": "node scripts/unpack-source.mjs",
-    "build:android-ci": "npm run prepare:web && node scripts/clean-android.mjs && npx cap add android && cd android && ./gradlew assembleDebug"
+    "build:android-ci": "npm run prepare:web && node scripts/clean-android.mjs && npx cap add android && node scripts/set-version.mjs && cd android && ./gradlew assembleDebug assembleRelease"
   },
   "dependencies": {
     "@capacitor/android": "latest",
