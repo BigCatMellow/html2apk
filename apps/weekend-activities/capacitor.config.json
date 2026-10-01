@@ -1,0 +1,12 @@
+{
+  "appId": "com.bigcatmellow.weekendactivities",
+  "appName": "Weekend Activities",
+  "webDir": "www",
+  "server": {
+    "url": "https://bigcatmellow.github.io/weekend_activites/",
+    "cleartext": false
+  },
+  "android": {
+    "backgroundColor": "#efe3d1"
+  }
+}

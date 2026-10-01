@@ -12,6 +12,7 @@ on:
           - ereader
           - shoulder-timer
           - morning-edition
+          - weekend-activities
       version:
         description: Version label, for example 1.0.0
         required: true

@@ -10,6 +10,7 @@ A central home for turning HTML/CSS/JavaScript projects into installable Android
 | [Mobile E-reader](apps/ereader/) | `com.bigcatmellow.ereaderapp` | Capacitor wrapper, file-based reader | Working build recipe |
 | [Shoulder Timer](apps/shoulder-timer/) | `com.bigcatmellow.shouldertimer` | Native local notifications, exact alarms, sound/vibration | Working build recipe |
 | [Morning Edition](apps/morning-edition/) | `com.bigcatmellow.morningedition` | Thin Capacitor shell loading the live GitHub Pages UI | Working build recipe |
+| [Weekend Activities](apps/weekend-activities/) | `com.bigcatmellow.weekendactivities` | Thin Capacitor shell loading the live Weekend Activities GitHub Pages UI | Working build recipe |
 
 ## Build an APK
 
@@ -58,7 +59,8 @@ html2apk/
 │   ├── meditation/
 │   ├── ereader/
 │   ├── shoulder-timer/
-│   └── morning-edition/
+│   ├── morning-edition/
+│   └── weekend-activities/
 ├── templates/basic/       # Starting point for a new HTML app
 ├── docs/wiki/             # Wiki source-of-truth Markdown
 └── .github/workflows/     # Build, release, and wiki automation
