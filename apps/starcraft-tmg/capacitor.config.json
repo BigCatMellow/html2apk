@@ -1,0 +1,12 @@
+{
+  "appId": "com.bigcatmellow.starcrafttmg",
+  "appName": "StarCraft TMG Companion",
+  "webDir": "www",
+  "server": {
+    "url": "https://bigcatmellow.github.io/SC_TMG_CA/",
+    "cleartext": false
+  },
+  "android": {
+    "backgroundColor": "#05060a"
+  }
+}
