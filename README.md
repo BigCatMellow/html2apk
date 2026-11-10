@@ -11,6 +11,7 @@ A central home for turning HTML/CSS/JavaScript projects into installable Android
 | [Shoulder Timer](apps/shoulder-timer/) | `com.bigcatmellow.shouldertimer` | Native local notifications, exact alarms, sound/vibration | Working build recipe |
 | [Morning Edition](apps/morning-edition/) | `com.bigcatmellow.morningedition` | Thin Capacitor shell loading the live GitHub Pages UI | Working build recipe |
 | [Weekend Activities](apps/weekend-activities/) | `com.bigcatmellow.weekendactivities` | Thin Capacitor shell loading the live Weekend Activities GitHub Pages UI | Working build recipe |
+| [StarCraft TMG Companion](apps/starcraft-tmg/) | `com.bigcatmellow.starcrafttmg` | Live-hosted army builder and battle tracker | Android build workflow |
 
 ## Build an APK
 
