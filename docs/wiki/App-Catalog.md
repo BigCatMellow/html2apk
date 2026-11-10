@@ -37,6 +37,14 @@
 - Hosted UI: `https://bigcatmellow.github.io/weekend_activites/`
 - Notes: the live Weekend Activities site is the source of truth. Weekly event/data and normal UI changes appear in the installed app without rebuilding the APK; native-shell changes still require a new APK.
 
+## StarCraft TMG Companion
+
+- Folder: `apps/starcraft-tmg`
+- Package: `com.bigcatmellow.starcrafttmg`
+- Type: remote-hosted GitHub Pages companion in a Capacitor Android shell
+- Hosted UI: `https://bigcatmellow.github.io/SC_TMG_CA/`
+- Notes: current rules, army lists, tactical cards and portraits live in the companion repo and update without rebuilding Android. An internet connection is required. Roster localStorage in the APK is separate from Chrome. Build using **Actions → Build APK**, or create signed updates via **Publish APK Release**.
+
 ## APK storage policy
 
 GitHub Actions artifacts are useful for test builds but expire. GitHub Releases are the intended permanent APK shelf. Use the **Publish APK Release** workflow when an APK is ready to keep.
